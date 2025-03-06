@@ -252,12 +252,23 @@ INNER JOIN nl_players ON al_players.playerid = nl_players.playerid;
 7. Which pitcher was the least efficient in 2016 in terms of salary / strikeouts? Only consider pitchers who started at least 10 games (across all teams). 
 Note that pitchers often play for more than one team in a season, so be sure that you are counting all stats for each player.
 
-
+SELECT people.playerid, namefirst, namelast, SUM(so) AS strikeouts, SUM(gs) AS games_started, SUM(salary), SUM(salary)/SUM(so) AS so_per_dollar, pitching.yearid
+FROM people
+LEFT JOIN pitching ON people.playerid = pitching.playerid
+LEFT JOIN salaries ON people.playerid = salaries.playerid
+WHERE pitching.yearid = 2016
+	AND gs >= 10
+	AND salary IS NOT NULL
+GROUP BY people.playerid, namefirst, namelast, pitching.yearid
+ORDER BY so_per_dollar
+LIMIT 25;
 
 8. Find all players who have had at least 3000 career hits. 
 Report those players' names, total number of hits, and the year they were inducted into the hall of fame 
 (If they were not inducted into the hall of fame, put a null in that column.) 
 Note that a player being inducted into the hall of fame is indicated by a 'Y' in the inducted column of the halloffame table.
+
+
 
 9. Find all players who had at least 1,000 hits for two different teams. Report those players' full names.
 
